@@ -224,6 +224,7 @@ session_start();
       tableOutputString = tableOutputString + '<tr>';
       tableOutputString = tableOutputString + '<td>' + (i + 1) + '</td>';
 
+      
       for (var key in response[i]) {
         if (key == "exam_name") {
           Exam_id = response[i]["exam_id"];
@@ -244,9 +245,22 @@ session_start();
               if (this.readyState == 4 && this.status == 200) {
                 var response = JSON.parse(this.responseText);
                 if (response["graded"] == "true") {
-                  tableOutputString = tableOutputString + '<td>' + "graded" + '</td>' + '</tbody>';
+                
+                  var xhttp = new XMLHttpRequest();
+                  xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                         var response = JSON.parse(this.responseText);
+                        tableOutputString = tableOutputString + '<td>' + response[0]["grade"] + '</td>' + '</tr>';
+                        
+                    }
+                  };
+                 
+                  xhttp.open("POST", "getGrade.php?id=" + Exam_id, false);
+                  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                  xhttp.send();
+
                 } else {
-                  tableOutputString = tableOutputString + '<td>' + "Not graded" + '</td>' + '</tbody>';
+                  tableOutputString = tableOutputString + '<td>' + "Not graded" + '</td>' + '</tr>';
                 }
               }
             };
@@ -332,11 +346,11 @@ session_start();
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-
+             window.location.assign("student.html");            ///////////////
         }
       };
 
-      xhttp.open("POST", "sendAnswers.php", true);
+      xhttp.open("POST", "sendAnswers.php", false);
       xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       xhttp.send(JsonString);
 
